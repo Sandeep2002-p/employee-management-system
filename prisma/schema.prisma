@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+model Employee {
+  id         Int      @id @default(autoincrement()) // auto-generates unique IDs
+  name       String                                  // employee's full name
+  email      String   @unique                        // must be unique across all employees
+  phone      String                                  // phone number
+  department String                                  // department name (simple text for now)
+  status     String   @default("Active")              // Active or Inactive
+  createdAt  DateTime @default(now())                 // auto-set when the row is created
+}
+model Department {
+  id             Int      @id @default(autoincrement()) // auto-generated unique ID
+  name           String   @unique                        // department name, must be unique
+  manager        String                                   // manager's name
+  employeeCount  Int      @default(0)                     // number of employees (simple count for now)
+  createdAt      DateTime @default(now())                 // auto-set when created
+}
+model User {
+  id        Int      @id @default(autoincrement()) // unique ID
+  email     String   @unique                        // used to log in, must be unique
+  password  String                                  // will store a HASHED password, never plain text
+  name      String                                  // display name
+  createdAt DateTime @default(now())
+}
