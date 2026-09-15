@@ -102,13 +102,27 @@ export default function EmployeesPage() {
       console.error(error);
     }
   };
-
-  const columns = [
-    { title: "ID", dataIndex: "id", key: "id" },
-    { title: "Name", dataIndex: "name", key: "name" },
+   const columns = [
+    {
+      title: "ID",
+      dataIndex: "id",
+      key: "id",
+      sorter: (a: Employee, b: Employee) => a.id - b.id, // numeric sort
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      sorter: (a: Employee, b: Employee) => a.name.localeCompare(b.name), // alphabetical sort
+    },
     { title: "Email", dataIndex: "email", key: "email" },
     { title: "Phone", dataIndex: "phone", key: "phone" },
-    { title: "Department", dataIndex: "department", key: "department" },
+    {
+      title: "Department",
+      dataIndex: "department",
+      key: "department",
+      sorter: (a: Employee, b: Employee) => a.department.localeCompare(b.department),
+    },
     {
       title: "Status",
       dataIndex: "status",

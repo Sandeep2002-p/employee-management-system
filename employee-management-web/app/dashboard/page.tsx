@@ -138,7 +138,7 @@ export default function Home() {
               opacity: 0.9,
             }}
           >
-            Here's an overview of your Employee Management System.
+             Overview of Employee Management System.
           </p>
         </div>
 
