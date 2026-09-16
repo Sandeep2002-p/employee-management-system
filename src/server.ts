@@ -20,7 +20,7 @@ app.register(cors, {
 
 // register JWT support — used to sign/verify login tokens
 app.register(jwt, {
-  secret: "your-super-secret-key-change-this-later", // keep this private in real production apps
+  secret: process.env.JWT_SECRET || "your-super-secret-key-change-this-later",
 });
 
 // simple health check route
