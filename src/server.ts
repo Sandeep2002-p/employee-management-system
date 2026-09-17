@@ -185,11 +185,12 @@ app.delete("/departments/:id", async (request) => {
 // start the server
 const start = async () => {
   try {
-    await app.listen({ port: 4000 }); // begin listening for requests
-    console.log("Server running at http://localhost:4000");
+    const port = Number(process.env.PORT) || 4000; // Render provides its own PORT
+    await app.listen({ port, host: "0.0.0.0" }); // 0.0.0.0 makes it reachable from outside the container
+    console.log(`Server running on port ${port}`);
   } catch (err) {
-    app.log.error(err); // print the error if startup fails
-    process.exit(1); // exit the program with an error code
+    app.log.error(err);
+    process.exit(1);
   }
 };
 
