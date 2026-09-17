@@ -20,7 +20,7 @@ app.register(cors, {
 
 // register JWT support — used to sign/verify login tokens
 app.register(jwt, {
-  secret: process.env.JWT_SECRET || "your-super-secret-key-change-this-later",
+  secret: process.env.JWT_SECRET || "Emp1oyeeMgmt$ecure2026TokenKeyXyz",
 });
 
 // simple health check route
