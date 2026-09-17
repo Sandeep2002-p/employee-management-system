@@ -12,7 +12,7 @@ interface Department {
   employeeCount: number;
 }
 
-const API_URL = "http://localhost:4000"; // base URL of our backend API
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"; // base URL of our backend API
 
 export default function DepartmentsPage() {
   const [departments, setDepartments] = useState<Department[]>([]); // starts EMPTY, not mock data

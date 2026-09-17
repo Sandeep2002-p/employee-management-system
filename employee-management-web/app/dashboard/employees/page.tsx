@@ -15,7 +15,7 @@ interface Employee {
 }
 
 // the base URL of our backend API — one place to change it later if needed
-const API_URL = "http://localhost:4000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export default function EmployeesPage() {
   const [employees, setEmployees] = useState<Employee[]>([]); // starts EMPTY now, not mock data

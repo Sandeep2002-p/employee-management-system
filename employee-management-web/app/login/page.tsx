@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"; // lets us redirect the user after 
 
 const { Title } = Typography; // shortcut to use <Title> for headings
 
-const API_URL = "http://localhost:4000"; // base URL of our backend API
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"; // base URL of our backend API
 
 export default function LoginPage() {
   const router = useRouter(); // gives us a way to navigate to another page in code
