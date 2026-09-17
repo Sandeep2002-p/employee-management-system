@@ -12,7 +12,7 @@ const app = Fastify({ logger: true }); // create the server, logger:true prints 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter }); // create a connection to our database
 
-// allow our frontend (localhost:3000) to call this API
+// allow our frontend to call this API
 app.register(cors, {
   origin: "http://localhost:3000",
   methods: ["GET", "POST", "PUT", "DELETE"], // explicitly allow all methods our app uses
@@ -20,7 +20,7 @@ app.register(cors, {
 
 // register JWT support — used to sign/verify login tokens
 app.register(jwt, {
-  secret: process.env.JWT_SECRET || "Emp1oyeeMgmt$ecure2026TokenKeyXyz",
+  secret: process.env.JWT_SECRET || "dev-only-fallback-secret", // real secret comes from Render's env vars
 });
 
 // simple health check route
@@ -36,7 +36,6 @@ app.post("/register-test-user", async (request, reply) => {
     name: string;
   };
 
-  // hash the password before storing it — "10" is the hashing strength (a standard default)
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await prisma.user.create({
@@ -44,7 +43,6 @@ app.post("/register-test-user", async (request, reply) => {
   });
 
   reply.code(201);
-  // never send the password back, even hashed — just confirm creation
   return { id: user.id, email: user.email, name: user.name };
 });
 
@@ -52,15 +50,13 @@ app.post("/register-test-user", async (request, reply) => {
 app.post("/login", async (request, reply) => {
   const { email, password } = request.body as { email: string; password: string };
 
-  // find the user with this email
   const user = await prisma.user.findUnique({ where: { email } });
 
   if (!user) {
-    reply.code(401); // 401 = "Unauthorized"
+    reply.code(401);
     return { error: "Invalid email or password" };
   }
 
-  // compare the typed password against the stored hashed password
   const passwordMatches = await bcrypt.compare(password, user.password);
 
   if (!passwordMatches) {
@@ -68,7 +64,6 @@ app.post("/login", async (request, reply) => {
     return { error: "Invalid email or password" };
   }
 
-  // credentials are correct — create a signed token containing the user's id and email
   const token = app.jwt.sign({ id: user.id, email: user.email, name: user.name });
 
   return { token, user: { id: user.id, email: user.email, name: user.name } };
@@ -76,13 +71,11 @@ app.post("/login", async (request, reply) => {
 
 // ===== EMPLOYEE ROUTES =====
 
-// GET /employees — fetch ALL employees from the database
 app.get("/employees", async () => {
   const employees = await prisma.employee.findMany();
   return employees;
 });
 
-// POST /employees — create a NEW employee in the database
 app.post("/employees", async (request, reply) => {
   const { name, email, phone, department, status } = request.body as {
     name: string;
@@ -100,7 +93,6 @@ app.post("/employees", async (request, reply) => {
   return newEmployee;
 });
 
-// PUT /employees/:id — update an EXISTING employee by id
 app.put("/employees/:id", async (request) => {
   const { id } = request.params as { id: string };
   const { name, email, phone, department, status } = request.body as {
@@ -119,7 +111,6 @@ app.put("/employees/:id", async (request) => {
   return updatedEmployee;
 });
 
-// DELETE /employees/:id — remove an employee by id
 app.delete("/employees/:id", async (request) => {
   const { id } = request.params as { id: string };
 
@@ -132,13 +123,11 @@ app.delete("/employees/:id", async (request) => {
 
 // ===== DEPARTMENT ROUTES =====
 
-// GET /departments — fetch ALL departments from the database
 app.get("/departments", async () => {
   const departments = await prisma.department.findMany();
   return departments;
 });
 
-// POST /departments — create a NEW department in the database
 app.post("/departments", async (request, reply) => {
   const { name, manager, employeeCount } = request.body as {
     name: string;
@@ -154,7 +143,6 @@ app.post("/departments", async (request, reply) => {
   return newDepartment;
 });
 
-// PUT /departments/:id — update an EXISTING department by id
 app.put("/departments/:id", async (request) => {
   const { id } = request.params as { id: string };
   const { name, manager, employeeCount } = request.body as {
@@ -171,7 +159,6 @@ app.put("/departments/:id", async (request) => {
   return updatedDepartment;
 });
 
-// DELETE /departments/:id — remove a department by id
 app.delete("/departments/:id", async (request) => {
   const { id } = request.params as { id: string };
 
@@ -194,4 +181,4 @@ const start = async () => {
   }
 };
 
-start(); // actually run the function above
+start();
